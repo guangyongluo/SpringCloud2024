@@ -3,6 +3,7 @@ package com.vilin.cloud.controller;
 import com.vilin.cloud.entities.PayDTO;
 import com.vilin.cloud.resp.ResultData;
 import jakarta.annotation.Resource;
+import java.util.List;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,23 +30,23 @@ public class OrderController
     private RestTemplate restTemplate;
 
     @PostMapping(value = "/consumer/pay/add")
-    public ResultData addOrder(@RequestBody PayDTO payDTO)
+    private ResultData addOrder(@RequestBody PayDTO payDTO)
     {
         return restTemplate.postForObject(PaymentSrv_URL + "/pay/add", payDTO, ResultData.class);
     }
 
     @DeleteMapping(value = "/consumer/pay/delete/{id}")
-    public void deleteOrder(@PathVariable("id") Integer id){
+    private void deleteOrder(@PathVariable("id") Integer id){
         restTemplate.delete(PaymentSrv_URL + "/pay/delete/{1}", id);
     }
 
     @PutMapping(value = "/consumer/pay/update")
-    public void updateOrder(@RequestBody PayDTO payDTO){
+    private void updateOrder(@RequestBody PayDTO payDTO){
         restTemplate.put(PaymentSrv_URL + "/pay/update", payDTO);
     }
 
     @GetMapping(value = "/consumer/pay/get/{id}")
-    public ResultData getPayInfo(@PathVariable("id") Integer id)
+    private ResultData getPayInfo(@PathVariable("id") Integer id)
     {
         return restTemplate.getForObject(PaymentSrv_URL + "/pay/get/"+id,ResultData.class,id);
     }
@@ -56,25 +57,30 @@ public class OrderController
         return restTemplate.getForObject(PaymentSrv_URL + "/pay/get/info", String.class);
     }
 
+    @GetMapping(value = "/consumer/pay/get/env")
+    private ResultData<String> getEnvByConsul(){
+        return restTemplate.getForObject(PaymentSrv_URL + "/pay/get/env", ResultData.class);
+    }
 
-//    @Resource
-//    private DiscoveryClient discoveryClient;
-//    @GetMapping("/consumer/discovery")
-//    public String discovery()
-//    {
-//        List<String> services = discoveryClient.getServices();
-//        for (String element : services) {
-//            System.out.println(element);
-//        }
-//
-//        System.out.println("===================================");
-//
-//        List<ServiceInstance> instances = discoveryClient.getInstances("cloud-payment-service");
-//        for (ServiceInstance element : instances) {
-//            System.out.println(element.getServiceId()+"\t"+element.getHost()+"\t"+element.getPort()+"\t"+element.getUri());
-//        }
-//
-//        return instances.get(0).getServiceId()+":"+instances.get(0).getPort();
-//    }
+
+    @Resource
+    private DiscoveryClient discoveryClient;
+    @GetMapping("/consumer/discovery")
+    public String discovery()
+    {
+        List<String> services = discoveryClient.getServices();
+        for (String element : services) {
+            System.out.println(element);
+        }
+
+        System.out.println("===================================");
+
+        List<ServiceInstance> instances = discoveryClient.getInstances("cloud-payment-service");
+        for (ServiceInstance element : instances) {
+            System.out.println(element.getServiceId()+"\t"+element.getHost()+"\t"+element.getPort()+"\t"+element.getUri());
+        }
+
+        return instances.get(0).getServiceId()+":"+instances.get(0).getPort();
+    }
 
 }
