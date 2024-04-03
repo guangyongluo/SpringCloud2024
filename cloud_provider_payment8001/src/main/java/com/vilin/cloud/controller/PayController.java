@@ -30,7 +30,9 @@ public class PayController {
 
   @PostMapping("/pay/add")
   @Operation(summary = "新增",description = "新增支付流水方法,json串做参数")
-  public ResultData<String> addPay(@RequestBody Pay pay) {
+  public ResultData<String> addPay(@RequestBody PayDTO payDto) {
+    Pay pay = new Pay();
+    BeanUtils.copyProperties(payDto, pay);
     int result = payService.add(pay);
     return ResultData.success("插入成功：" + result + "个支付款");
   }

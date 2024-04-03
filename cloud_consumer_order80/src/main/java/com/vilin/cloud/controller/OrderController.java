@@ -51,12 +51,6 @@ public class OrderController
         return restTemplate.getForObject(PaymentSrv_URL + "/pay/get/"+id,ResultData.class,id);
     }
 
-    @GetMapping(value = "/consumer/pay/get/info")
-    private String getInfoByConsul()
-    {
-        return restTemplate.getForObject(PaymentSrv_URL + "/pay/get/info", String.class);
-    }
-
     @GetMapping(value = "/consumer/pay/get/env")
     private ResultData<String> getEnvByConsul(){
         return restTemplate.getForObject(PaymentSrv_URL + "/pay/get/env", ResultData.class);
